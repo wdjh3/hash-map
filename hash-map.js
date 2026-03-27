@@ -15,6 +15,10 @@ class HashMap {
 
     return hashCode;
   }
+
+  set(key, value) {
+    this.map[this.hash(key)] = value;
+  }
 }
 
 export { HashMap };
