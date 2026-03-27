@@ -17,7 +17,33 @@ class HashMap {
   }
 
   set(key, value) {
-    this.map[this.hash(key)] = value;
+    const hashedIndex = this.hash(key);
+    const bucket = this.map[hashedIndex];
+    if (!bucket) {
+      this.map[hashedIndex] = new Node(key, value);
+      return;
+    }
+    let currentNode = bucket;
+    if (currentNode.key === key) {
+      currentNode.value = value;
+      return;
+    }
+    while (currentNode.nextNode) {
+      if (currentNode.nextNode.key === key) {
+        currentNode.nextNode.value = value;
+        return;
+      }
+      currentNode = currentNode.nextNode;
+    }
+    currentNode.nextNode = new Node(key,value);
+  }
+}
+
+class Node {
+  constructor(key, value, nextNode = null) {
+    this.key = key;
+    this.value = value;
+    this.nextNode = nextNode;
   }
 }
 
