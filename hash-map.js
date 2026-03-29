@@ -11,7 +11,7 @@ class HashMap {
 
     const primeNumber = 31;
     for (let i = 0; i < key.length; i++) {
-      hashCode = (primeNumber * hashCode + key.charCodeAt(i));
+      hashCode = primeNumber * hashCode + key.charCodeAt(i);
     }
 
     return hashCode % this.#capacity;
@@ -23,6 +23,7 @@ class HashMap {
     if (!bucket) {
       this.map[hashedIndex] = new Node(key, value);
       this.#length++;
+      this.adjustSize();
       return;
     }
     let currentNode = bucket;
@@ -39,6 +40,18 @@ class HashMap {
     }
     currentNode.nextNode = new Node(key, value);
     this.#length++;
+    this.adjustSize();
+  }
+
+  adjustSize() {
+    if (this.#length > this.#capacity * this.#loadFactor) {
+      this.#capacity *= 2;
+      const entries = this.entries();
+      this.clear();
+      for (const entry of entries) {
+        this.set(entry[0], entry[1]);
+      }
+    }
   }
 
   get(key) {
@@ -71,13 +84,13 @@ class HashMap {
     const hashCode = this.hash(key);
 
     if (!this.map[hashCode]) {
-        return false;
+      return false;
     }
     let currentNode = this.map[hashCode];
     if (currentNode.key === key) {
-        this.map[hashCode] = currentNode.nextNode;
-        this.#length--;
-        return true;
+      this.map[hashCode] = currentNode.nextNode;
+      this.#length--;
+      return true;
     }
     while (currentNode.nextNode) {
       if (currentNode.nextNode.key === key) {
@@ -95,7 +108,45 @@ class HashMap {
   }
 
   clear() {
+    this.#length = 0;
     this.map = [];
+  }
+
+  keys() {
+    const keys = [];
+    for (const bucket of this.map) {
+      let currentNode = bucket;
+      while (currentNode) {
+        keys.push(currentNode.key);
+        currentNode = currentNode.nextNode;
+      }
+    }
+    return keys;
+  }
+
+  values() {
+    const values = [];
+    for (const bucket of this.map) {
+      let currentNode = bucket;
+      while (currentNode) {
+        values.push(currentNode.value);
+        currentNode = currentNode.nextNode;
+      }
+    }
+    return values;
+  }
+
+  entries() {
+    const entries = [];
+    for (const bucket of this.map) {
+      let currentNode = bucket;
+      while (currentNode) {
+        // Format: [ key , value ]
+        entries.push([currentNode.key, currentNode.value]);
+        currentNode = currentNode.nextNode;
+      }
+    }
+    return entries;
   }
 }
 
