@@ -10,10 +10,10 @@ class HashMap {
 
     const primeNumber = 31;
     for (let i = 0; i < key.length; i++) {
-      hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % this.#capacity;
+      hashCode = (primeNumber * hashCode + key.charCodeAt(i));
     }
 
-    return hashCode;
+    return hashCode % this.#capacity;
   }
 
   set(key, value) {
@@ -57,6 +57,27 @@ class HashMap {
     let currentNode = this.map[hashCode];
     while (currentNode) {
       if (currentNode.key === key) {
+        return true;
+      }
+      currentNode = currentNode.nextNode;
+    }
+    return false;
+  }
+
+  remove(key) {
+    const hashCode = this.hash(key);
+
+    if (!this.map[hashCode]) {
+        return false;
+    }
+    let currentNode = this.map[hashCode];
+    if (currentNode.key === key) {
+        this.map[hashCode] = currentNode.nextNode;
+        return true;
+    }
+    while (currentNode.nextNode) {
+      if (currentNode.nextNode.key === key) {
+        currentNode.nextNode = currentNode.nextNode.nextNode;
         return true;
       }
       currentNode = currentNode.nextNode;
