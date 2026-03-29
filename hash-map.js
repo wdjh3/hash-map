@@ -1,6 +1,7 @@
 class HashMap {
   #capacity = 16;
   #loadFactor = 0.75;
+  #length = 0;
   constructor() {
     this.map = [];
   }
@@ -21,6 +22,7 @@ class HashMap {
     const bucket = this.map[hashedIndex];
     if (!bucket) {
       this.map[hashedIndex] = new Node(key, value);
+      this.#length++;
       return;
     }
     let currentNode = bucket;
@@ -36,6 +38,7 @@ class HashMap {
       currentNode = currentNode.nextNode;
     }
     currentNode.nextNode = new Node(key, value);
+    this.#length++;
   }
 
   get(key) {
@@ -73,16 +76,26 @@ class HashMap {
     let currentNode = this.map[hashCode];
     if (currentNode.key === key) {
         this.map[hashCode] = currentNode.nextNode;
+        this.#length--;
         return true;
     }
     while (currentNode.nextNode) {
       if (currentNode.nextNode.key === key) {
         currentNode.nextNode = currentNode.nextNode.nextNode;
+        this.#length--;
         return true;
       }
       currentNode = currentNode.nextNode;
     }
     return false;
+  }
+
+  length() {
+    return this.#length;
+  }
+
+  clear() {
+    this.map = [];
   }
 }
 
