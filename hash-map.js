@@ -50,6 +50,19 @@ class HashMap {
     }
     return null;
   }
+
+  has(key) {
+    const hashCode = this.hash(key);
+
+    let currentNode = this.map[hashCode];
+    while (currentNode) {
+      if (currentNode.key === key) {
+        return true;
+      }
+      currentNode = currentNode.nextNode;
+    }
+    return false;
+  }
 }
 
 class Node {
